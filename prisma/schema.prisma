@@ -18,8 +18,8 @@ model Buyers {
   id         Int        @id @default(autoincrement())
   fullName   String
   city       String?
-  payment    Int
-  buyingDate DateTime
+  payment    Int?       @default(0)
+  buyingDate DateTime?  @default(now())
   products   Products[]
   purchase   Purchase[]
 }
@@ -32,7 +32,7 @@ model Products {
   sellingPrice Int
   unit         String
   buyerId      Int? // Add a field for the foreign key
-  buyingDate   DateTime
+  buyingDate   DateTime @default(now())
   buyer        Buyers?  @relation(fields: [buyerId], references: [id])
 }
 

@@ -40,12 +40,32 @@ class ProductsController {
             totalAmount: product?.quantity * product?.buyingPrice,
           },
         });
+
+        await prisma.buyers.update({
+          where: { id: Number(product?.buyerId) },
+          data: {
+            buyingDate: product?.buyingDate,
+            payment: {
+              increment: product?.quantity * product?.buyingPrice,
+            },
+          },
+        });
       }
 
       res.status(201).json({ message: "Product Add Successfully", product });
     } catch (error) {
       console.error("Error creating Product:", error);
       res.status(500).json({ message: "Failed to save Product" });
+    }
+  };
+
+  getAll = async (req: Request, res: Response) => {
+    try {
+      const products = await prisma.products.findMany({});
+      res.status(200).json({ products });
+    } catch (error) {
+      console.error("Error getting products:", error);
+      res.status(500).json({ message: "Failed to fetch products" });
     }
   };
 
@@ -132,6 +152,7 @@ class ProductsController {
       });
 
       if (prevProduct && product) {
+        // create purchase
         await prisma.purchase.create({
           data: {
             item: itemName,
@@ -141,6 +162,18 @@ class ProductsController {
             purchasingDate: buyingDate,
             totalAmount:
               (product?.quantity - prevProduct?.quantity) * buyingPrice,
+          },
+        });
+
+        //update the buyer
+        await prisma.buyers.update({
+          where: { id: Number(product?.buyerId) },
+          data: {
+            buyingDate: product?.buyingDate,
+            payment: {
+              increment:
+                (product?.quantity - prevProduct?.quantity) * buyingPrice,
+            },
           },
         });
       }
@@ -163,7 +196,7 @@ class ProductsController {
 
       res
         .status(200)
-        .json({ message: "PRoduct deleted Successfully", deletedProduct });
+        .json({ message: "Product deleted Successfully", deletedProduct });
     } catch (error) {
       console.error("Error deleting product:", error);
       res.status(500).json({ message: "Failed to delete product" });

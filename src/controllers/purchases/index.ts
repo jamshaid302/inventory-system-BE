@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../../../prisma";
 import { Buyers, Products, Purchase } from "@prisma/client";
 import { paginateData } from "../../utils/helper";
+import { count } from "console";
 
 class PurchasesController {
   getAllPurchases = async (req: Request, res: Response) => {
@@ -41,18 +42,21 @@ class PurchasesController {
 
   getTotalPurchasesAmount = async (req: Request, res: Response) => {
     try {
+      let stock = 0;
       const purchases = await prisma.purchase.findMany({
         select: {
           totalAmount: true,
         },
       });
 
+      stock = await prisma.products.count();
+
       const totalPurchases = purchases?.reduce(
         (acc: any, current: any) => acc + current?.totalAmount,
         0
       );
 
-      res.status(200).json({ totalPurchases });
+      res.status(200).json({ totalPurchases, itmeInStock: stock });
     } catch (error) {
       console.error("Error getting purchases:", error);
       res.status(500).json({ message: "Failed to fetch purchases" });

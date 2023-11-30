@@ -6,16 +6,15 @@ import { paginateData } from "../../utils/helper";
 class BuyerController {
   createBuyer = async (req: Request, res: Response) => {
     try {
-      const { fullName, city, buyingDate, payment }: Buyers = req?.body;
-      const data = {
-        fullName,
-        city,
-        buyingDate,
-        payment,
-      };
+      const { fullName, city, buyingDate, payment = 0 }: Buyers = req?.body;
 
       const buyer = await prisma.buyers.create({
-        data,
+        data: {
+          fullName,
+          city,
+          buyingDate,
+          payment: payment || 0,
+        },
       });
 
       res.status(201).json({ message: "Buyer Add Successfully", buyer });
@@ -39,7 +38,7 @@ class BuyerController {
             contains: search as string,
           },
         },
-        orderBy: [{ id: "desc" }],
+        orderBy: [{ buyingDate: "desc" }],
       });
 
       count = buyers?.length;

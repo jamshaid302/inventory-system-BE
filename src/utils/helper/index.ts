@@ -18,5 +18,6 @@ export const paginateData = (data: any = [], take = 10, skip = 0) => {
     console.error("Data is not an array.");
     return [];
   }
+
   return sortedData.slice(start, end);
 };
