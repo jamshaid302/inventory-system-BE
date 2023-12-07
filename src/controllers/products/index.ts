@@ -10,23 +10,24 @@ class ProductsController {
         itemName,
         buyingPrice,
         sellingPrice,
+        company,
         quantity,
         unit,
         buyerId,
         buyingDate,
       }: Products = req?.body;
-      const data = {
-        itemName,
-        buyingPrice,
-        sellingPrice,
-        quantity,
-        unit,
-        buyerId,
-        buyingDate,
-      };
 
       const product = await prisma.products.create({
-        data,
+        data: {
+          itemName,
+          buyingPrice,
+          company,
+          sellingPrice,
+          quantity,
+          unit,
+          buyerId,
+          buyingDate,
+        },
       });
 
       if (product) {
@@ -125,6 +126,7 @@ class ProductsController {
         itemName,
         buyingPrice,
         sellingPrice,
+        company,
         quantity,
         unit,
         buyerId,
@@ -134,6 +136,7 @@ class ProductsController {
         itemName,
         buyingPrice,
         sellingPrice,
+        company,
         quantity,
         unit,
         buyerId,
