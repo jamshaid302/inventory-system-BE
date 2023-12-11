@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../../../prisma";
-import { Buyers, Products, Purchase } from "@prisma/client";
+import { Purchase } from "@prisma/client";
 import { paginateData } from "../../utils/helper";
-import { count } from "console";
 
 class PurchasesController {
   getAllPurchases = async (req: Request, res: Response) => {

@@ -3,6 +3,7 @@ import userRoutes from "./user";
 import buyerRoutes from "./buyers";
 import productRoutes from "./products";
 import purchasesRoutes from "./purchases";
+import salesRoutes from "./sales";
 
 class CreatceRoutes {
   public routers: express.Router[] = [];
@@ -12,6 +13,7 @@ class CreatceRoutes {
     this.routers.push(express.Router().use("/buyer", buyerRoutes));
     this.routers.push(express.Router().use("/product", productRoutes));
     this.routers.push(express.Router().use("/purchases", purchasesRoutes));
+    this.routers.push(express.Router().use("/sales", salesRoutes));
     // Add more routes as needed
   }
 }
