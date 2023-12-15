@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../../../prisma";
 import { Sales, SalesItem } from "@prisma/client";
+import { rejects } from "assert";
 
 class SalesController {
   createSales = async (req: Request, res: Response) => {
@@ -28,6 +29,22 @@ class SalesController {
         await prisma.salesItem.createMany({
           data: saleItems,
         });
+
+        // update the stock
+        const updateProductPromises = data?.map(async (item: any) => {
+          await prisma.products.update({
+            where: {
+              id: item?.id,
+            },
+            data: {
+              quantity: {
+                decrement: item?.quantity,
+              },
+            },
+          });
+        });
+
+        await Promise.all(updateProductPromises);
       }
 
       res

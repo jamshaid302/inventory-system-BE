@@ -155,14 +155,12 @@ class ProductsController {
       });
 
       if (prevProduct && product) {
-        // create purchase
         await prisma.purchase.create({
           data: {
             item: itemName,
             perUnitPrice: buyingPrice,
             quantity: product?.quantity - prevProduct?.quantity,
             buyerId: buyerId,
-            purchasingDate: buyingDate,
             totalAmount:
               (product?.quantity - prevProduct?.quantity) * buyingPrice,
           },

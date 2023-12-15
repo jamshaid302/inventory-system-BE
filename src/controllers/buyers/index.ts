@@ -6,14 +6,13 @@ import { paginateData } from "../../utils/helper";
 class BuyerController {
   createBuyer = async (req: Request, res: Response) => {
     try {
-      const { fullName, city, buyingDate, payment = 0 }: Buyers = req?.body;
+      const { fullName, city, buyingDate }: Buyers = req?.body;
 
       const buyer = await prisma.buyers.create({
         data: {
           fullName,
           city,
           buyingDate,
-          payment: payment || 0,
         },
       });
 

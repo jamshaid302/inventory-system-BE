@@ -43,7 +43,7 @@ model Purchase {
   item           String
   perUnitPrice   Int
   quantity       Int
-  purchasingDate DateTime
+  purchasingDate DateTime @default(now())
   totalAmount    Int
   buyerId        Int?
   buyer          Buyers?  @relation(fields: [buyerId], references: [id])
