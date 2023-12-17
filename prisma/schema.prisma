@@ -61,8 +61,9 @@ model SalesItem {
 }
 
 model Sales {
-  id           Int         @id @default(autoincrement())
-  date         DateTime    @default(now())
-  invoiceTotal Int
-  SalesItem    SalesItem[]
+  id            Int         @id @default(autoincrement())
+  date          DateTime    @default(now())
+  invoiceTotal  Int
+  invoiceNumber String?
+  salesItem     SalesItem[]
 }

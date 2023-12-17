@@ -5,6 +5,7 @@ import { authentication } from "../middlewares";
 const salesRoutes: Router = Router();
 const controller = new SalesController();
 
+salesRoutes.get("/", authentication, controller.getAllInvoices);
 salesRoutes.post("/", authentication, controller.createSales);
 
 export default salesRoutes;
