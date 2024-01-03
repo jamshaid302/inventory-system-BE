@@ -84,7 +84,7 @@ class ProductsController {
             contains: search as string,
           },
         },
-        orderBy: [{ id: "desc" }],
+        orderBy: [{ quantity: "asc" }],
         include: {
           buyer: {
             select: {

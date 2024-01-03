@@ -21,3 +21,25 @@ export const paginateData = (data: any = [], take = 10, skip = 0) => {
 
   return sortedData.slice(start, end);
 };
+
+export const isSameDay = (date1: Date, date2: Date) => {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  );
+};
+
+export const calculateTotal = (sales: any[] | undefined) => {
+  return (
+    sales?.reduce((acc: any, curr: any) => acc + curr?.invoiceTotal, 0) || 0
+  );
+};
+
+export const filterSalesByDay = (sales: any[] | undefined, day: Date) => {
+  return (
+    sales?.filter(
+      (item) => item?.date && isSameDay(new Date(item.date), day)
+    ) || []
+  );
+};

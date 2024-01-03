@@ -2,7 +2,11 @@ import { Request, Response } from "express";
 import prisma from "../../../prisma";
 import { Sales, SalesItem } from "@prisma/client";
 import { rejects } from "assert";
-import { paginateData } from "../../utils/helper";
+import {
+  calculateTotal,
+  filterSalesByDay,
+  paginateData,
+} from "../../utils/helper";
 
 class SalesController {
   createSales = async (req: Request, res: Response) => {
@@ -91,6 +95,32 @@ class SalesController {
     } catch (error) {
       console.error("Error fectching Invoices:", error);
       res.status(500).json({ message: "Failed to fetch Invoices" });
+    }
+  };
+
+  getTotalSale = async (req: Request, res: Response) => {
+    try {
+      const currentDay = new Date();
+      const currentYear = currentDay.getFullYear();
+      const sales = await prisma.sales.findMany({
+        select: {
+          invoiceTotal: true,
+          date: true,
+        },
+      });
+
+      const salesTotal = calculateTotal(sales);
+      const currentDaysales = filterSalesByDay(sales, currentDay);
+      const currentYearSales = sales?.filter(
+        (item) => new Date(item?.date).getFullYear() == currentYear
+      );
+      console.log("currentYearSales", currentYearSales);
+      const currentDaySalesTotal = calculateTotal(currentDaysales);
+
+      res.status(200).json({ salesTotal, currentDaySalesTotal });
+    } catch (error) {
+      console.error("Error fectching Total Sales data:", error);
+      res.status(500).json({ message: "Failed to fetch Total Sales data" });
     }
   };
 }
