@@ -43,3 +43,14 @@ export const filterSalesByDay = (sales: any[] | undefined, day: Date) => {
     ) || []
   );
 };
+
+export const calculateMonthlySalesTotal = (sales: any[] | undefined) => {
+  const eachMonthSalesTotal: Record<number, number> = {};
+  sales?.forEach((item) => {
+    const month = new Date(item?.date).getMonth();
+    eachMonthSalesTotal[month] =
+      (eachMonthSalesTotal[month] || 0) + item?.invoiceTotal;
+  });
+
+  return Object.values(eachMonthSalesTotal);
+};

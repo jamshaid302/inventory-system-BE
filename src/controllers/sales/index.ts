@@ -3,6 +3,7 @@ import prisma from "../../../prisma";
 import { Sales, SalesItem } from "@prisma/client";
 import { rejects } from "assert";
 import {
+  calculateMonthlySalesTotal,
   calculateTotal,
   filterSalesByDay,
   paginateData,
@@ -102,7 +103,9 @@ class SalesController {
     try {
       const currentDay = new Date();
       const currentYear = currentDay.getFullYear();
+
       const sales = await prisma.sales.findMany({
+        orderBy: [{ date: "asc" }],
         select: {
           invoiceTotal: true,
           date: true,
@@ -114,10 +117,15 @@ class SalesController {
       const currentYearSales = sales?.filter(
         (item) => new Date(item?.date).getFullYear() == currentYear
       );
-      console.log("currentYearSales", currentYearSales);
-      const currentDaySalesTotal = calculateTotal(currentDaysales);
 
-      res.status(200).json({ salesTotal, currentDaySalesTotal });
+      const currentDaySalesTotal = calculateTotal(currentDaysales);
+      const eachMonthSalesTotal = calculateMonthlySalesTotal(currentYearSales);
+
+      res.status(200).json({
+        salesTotal,
+        currentDaySalesTotal,
+        eachMonthSalesTotal,
+      });
     } catch (error) {
       console.error("Error fectching Total Sales data:", error);
       res.status(500).json({ message: "Failed to fetch Total Sales data" });
