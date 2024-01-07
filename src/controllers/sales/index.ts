@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../../../prisma";
 import { Sales, SalesItem } from "@prisma/client";
-import { rejects } from "assert";
 import {
   calculateMonthlySalesTotal,
   calculateTotal,
@@ -13,8 +12,8 @@ class SalesController {
   createSales = async (req: Request, res: Response) => {
     try {
       const { data } = req?.body;
-
       const { invoiceTotal }: Sales = req?.body;
+
       const invoice = await prisma.sales.create({
         data: {
           invoiceTotal,
@@ -57,6 +56,33 @@ class SalesController {
       res
         .status(201)
         .json({ message: "Invoice generated Successfully", invoice });
+    } catch (error) {
+      console.error("Error creating Invoice:", error);
+      res.status(500).json({ message: "Failed to create Invoice" });
+    }
+  };
+
+  updateSales = async (req: Request, res: Response) => {
+    try {
+      const { data } = req?.body;
+
+      // update the stock
+      const updateProductPromises = data?.map(async (item: any) => {
+        await prisma.products.update({
+          where: {
+            id: item?.id,
+          },
+          data: {
+            quantity: {
+              increment: item?.quantity,
+            },
+          },
+        });
+      });
+
+      await Promise.all(updateProductPromises);
+
+      res.status(201).json({ message: "Items Return Successfully" });
     } catch (error) {
       console.error("Error creating Invoice:", error);
       res.status(500).json({ message: "Failed to create Invoice" });
