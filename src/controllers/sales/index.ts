@@ -141,7 +141,7 @@ class SalesController {
       const salesTotal = calculateTotal(sales);
       const currentDaysales = filterSalesByDay(sales, currentDay);
       const currentYearSales = sales?.filter(
-        (item) => new Date(item?.date).getFullYear() == currentYear
+        (item) => new Date(item?.date).getFullYear() == currentYear,
       );
 
       const currentDaySalesTotal = calculateTotal(currentDaysales);
