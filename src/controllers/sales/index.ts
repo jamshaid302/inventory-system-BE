@@ -1,18 +1,18 @@
-import { Request, Response } from 'express';
-import prisma from '../../../prisma';
-import { Sales, SalesItem } from '@prisma/client';
+import { Request, Response } from "express";
+import prisma from "../../../prisma";
+import { Sales, SalesItem } from "@prisma/client";
 import {
   calculateMonthlySalesTotal,
   calculateTotal,
   filterSalesByDay,
   paginateData,
-} from '../../utils/helper';
+} from "../../utils/helper";
 
 class SalesController {
   createSales = async (req: Request, res: Response) => {
     try {
-      const { data } = req?.body;
-      const { invoiceTotal }: Sales = req?.body;
+      const { data } = req?.body || {};
+      const { invoiceTotal }: Sales = req?.body || {};
 
       const invoice = await prisma.sales.create({
         data: {
@@ -55,16 +55,16 @@ class SalesController {
 
       res
         .status(201)
-        .json({ message: 'Invoice generated Successfully', invoice });
+        .json({ message: "Invoice generated Successfully", invoice });
     } catch (error) {
-      console.error('Error creating Invoice:', error);
-      res.status(500).json({ message: 'Failed to create Invoice' });
+      console.error("Error creating Invoice:", error);
+      res.status(500).json({ message: "Failed to create Invoice" });
     }
   };
 
   updateSales = async (req: Request, res: Response) => {
     try {
-      const { data } = req?.body;
+      const { data } = req?.body || {};
 
       // update the stock
       const updateProductPromises = data?.map(async (item: any) => {
@@ -82,10 +82,10 @@ class SalesController {
 
       await Promise.all(updateProductPromises);
 
-      res.status(201).json({ message: 'Items Return Successfully' });
+      res.status(201).json({ message: "Items Return Successfully" });
     } catch (error) {
-      console.error('Error creating Invoice:', error);
-      res.status(500).json({ message: 'Failed to create Invoice' });
+      console.error("Error creating Invoice:", error);
+      res.status(500).json({ message: "Failed to create Invoice" });
     }
   };
 
@@ -93,7 +93,7 @@ class SalesController {
     try {
       let invoices: any = [];
       let count = 0;
-      const { search, start = 0, limit = 10 } = req?.query;
+      const { search, start = 0, limit = 10 } = req?.query || {};
       const skip = Number(start);
       const take = Number(limit);
 
@@ -104,7 +104,7 @@ class SalesController {
           },
         },
         orderBy: {
-          date: 'desc',
+          date: "desc",
         },
         include: {
           salesItem: {
@@ -120,8 +120,8 @@ class SalesController {
 
       res.status(200).json({ count, invoices: paginatedDate });
     } catch (error) {
-      console.error('Error fectching Invoices:', error);
-      res.status(500).json({ message: 'Failed to fetch Invoices' });
+      console.error("Error fectching Invoices:", error);
+      res.status(500).json({ message: "Failed to fetch Invoices" });
     }
   };
 
@@ -131,7 +131,7 @@ class SalesController {
       const currentYear = currentDay.getFullYear();
 
       const sales = await prisma.sales.findMany({
-        orderBy: [{ date: 'asc' }],
+        orderBy: [{ date: "asc" }],
         select: {
           invoiceTotal: true,
           date: true,
@@ -153,8 +153,8 @@ class SalesController {
         eachMonthSalesTotal,
       });
     } catch (error) {
-      console.error('Error fectching Total Sales data:', error);
-      res.status(500).json({ message: 'Failed to fetch Total Sales data' });
+      console.error("Error fectching Total Sales data:", error);
+      res.status(500).json({ message: "Failed to fetch Total Sales data" });
     }
   };
 }

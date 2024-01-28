@@ -6,7 +6,7 @@ import { paginateData } from "../../utils/helper";
 class BuyerController {
   createBuyer = async (req: Request, res: Response) => {
     try {
-      const { fullName, city, buyingDate }: Buyers = req?.body;
+      const { fullName, city, buyingDate }: Buyers = req?.body || {};
 
       const buyer = await prisma.buyers.create({
         data: {
@@ -27,15 +27,24 @@ class BuyerController {
     try {
       let buyers: Buyers[] = [];
       let count = 0;
-      const { search, start = 0, limit = 10 } = req?.query;
+      const { search, start = 0, limit = 10 } = req?.query || {};
       const skip = Number(start);
       const take = Number(limit);
 
       buyers = await prisma.buyers.findMany({
         where: {
-          fullName: {
-            contains: search as string,
-          },
+          OR: [
+            {
+              fullName: {
+                contains: search as string,
+              },
+            },
+            {
+              city: {
+                contains: search as string,
+              },
+            },
+          ],
         },
         orderBy: [{ buyingDate: "desc" }],
       });
@@ -70,7 +79,7 @@ class BuyerController {
 
   updateBuyer = async (req: Request, res: Response) => {
     try {
-      const { fullName, city, buyingDate, payment }: Buyers = req?.body;
+      const { fullName, city, buyingDate, payment }: Buyers = req?.body || {};
       const data = {
         fullName,
         city,

@@ -8,7 +8,7 @@ class PurchasesController {
     try {
       let purchases: Purchase[] = [];
       let count = 0;
-      const { search, start = 0, limit = 10 } = req?.query;
+      const { search, start = 0, limit = 10 } = req?.query || {};
       const skip = Number(start);
       const take = Number(limit);
 
@@ -52,7 +52,7 @@ class PurchasesController {
 
       const totalPurchases = purchases?.reduce(
         (acc: any, current: any) => acc + current?.totalAmount,
-        0
+        0,
       );
 
       res.status(200).json({ totalPurchases, itmeInStock: stock });

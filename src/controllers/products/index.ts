@@ -15,7 +15,7 @@ class ProductsController {
         unit,
         buyerId,
         buyingDate,
-      }: Products = req?.body;
+      }: Products = req?.body || {};
 
       const product = await prisma.products.create({
         data: {
@@ -74,15 +74,24 @@ class ProductsController {
     try {
       let products: Products[] = [];
       let count = 0;
-      const { search, start = 0, limit = 10 } = req?.query;
+      const { search, start = 0, limit = 10 } = req?.query || undefined;
       const skip = Number(start);
       const take = Number(limit);
 
       products = await prisma.products.findMany({
         where: {
-          itemName: {
-            contains: search as string,
-          },
+          OR: [
+            {
+              itemName: {
+                contains: search as string,
+              },
+            },
+            {
+              company: {
+                contains: search as string,
+              },
+            },
+          ],
         },
         orderBy: [{ quantity: "asc" }],
         include: {
@@ -131,17 +140,7 @@ class ProductsController {
         unit,
         buyerId,
         buyingDate,
-      }: Products = req?.body;
-      const data = {
-        itemName,
-        buyingPrice,
-        sellingPrice,
-        company,
-        quantity,
-        unit,
-        buyerId,
-        buyingDate,
-      };
+      }: Products = req?.body || {};
 
       const prevProduct: Products | null = await prisma.products.findFirst({
         where: {
@@ -151,7 +150,16 @@ class ProductsController {
 
       const product: Products | null = await prisma.products.update({
         where: { id: Number(req?.params?.id) },
-        data,
+        data: {
+          itemName,
+          buyingPrice,
+          sellingPrice,
+          company,
+          quantity,
+          unit,
+          buyerId,
+          buyingDate,
+        },
       });
 
       if (prevProduct && product) {
