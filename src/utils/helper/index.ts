@@ -12,7 +12,7 @@ export const matchingPass = async (password1: string, password2: string) => {
 export const paginateData = (data: any = [], take = 10, skip = 0) => {
   const start = skip;
   const end = start + take;
-  let sortedData = data;
+  const sortedData = data;
 
   if (!Array.isArray(data)) {
     console.error("Data is not an array.");
@@ -39,7 +39,7 @@ export const calculateTotal = (sales: any[] | undefined) => {
 export const filterSalesByDay = (sales: any[] | undefined, day: Date) => {
   return (
     sales?.filter(
-      (item) => item?.date && isSameDay(new Date(item.date), day)
+      (item) => item?.date && isSameDay(new Date(item.date), day),
     ) || []
   );
 };

@@ -14,7 +14,6 @@ class CreatceRoutes {
     this.routers.push(express.Router().use("/product", productRoutes));
     this.routers.push(express.Router().use("/purchases", purchasesRoutes));
     this.routers.push(express.Router().use("/sales", salesRoutes));
-    // Add more routes as needed
   }
 }
 

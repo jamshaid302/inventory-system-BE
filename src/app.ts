@@ -1,11 +1,12 @@
-import dotenv from 'dotenv';
-import express, { Application, Router } from 'express';
-import bodyParser from 'body-parser';
-import http from 'http';
-import { Server } from 'socket.io';
-import CreatceRoutes from './routes';
-import CronHandler from './cron';
-import cors from 'cors';
+import dotenv from "dotenv";
+import express, { Application, Router } from "express";
+import bodyParser from "body-parser";
+import http from "http";
+import { Server } from "socket.io";
+import { requestLogger } from "./middlewares";
+import CreatceRoutes from "./routes";
+import CronHandler from "./cron";
+import cors from "cors";
 
 dotenv.config();
 
@@ -23,8 +24,8 @@ class App {
     this.server = http.createServer(this.app);
     this.io = new Server(this.server, {
       cors: {
-        origin: 'http://localhost:3000',
-        methods: ['GET', 'POST'],
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
         credentials: true,
       },
     });
@@ -32,6 +33,7 @@ class App {
     this.initializeRouters(this.appRoutes.routers);
     this.initializeSockets();
     this.initializeCronJobs();
+    this.initializeRequestLogger();
   }
 
   private initializeMiddlewares(): void {
@@ -39,18 +41,22 @@ class App {
     this.app.use(bodyParser.urlencoded({ extended: false }));
 
     const corsOptions = {
-      origin: ['http://localhost:3000'],
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+      origin: ["http://localhost:3000"],
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
       credentials: true, // Enable credentials (cookies, Authorization headers, etc.)
     };
 
     this.app.use(cors(corsOptions));
   }
 
+  private initializeRequestLogger() {
+    this.app.use(requestLogger);
+  }
+
   // Initialize all the routes of the application
   private initializeRouters(router: Router[]): void {
     router.forEach((routes: Router) => {
-      this.app.use('/api', routes);
+      this.app.use("/api", routes);
     });
   }
 
@@ -61,11 +67,11 @@ class App {
 
   // Initialize the socker.io server
   private initializeSockets(): void {
-    this.io.on('connection', (socket) => {
-      console.log('A user connected');
+    this.io.on("connection", (socket) => {
+      console.log("A user connected");
       // socket.emit('message', 'Welcome to the server!');
-      socket.on('disconnect', () => {
-        console.log('User disconnected');
+      socket.on("disconnect", () => {
+        console.log("User disconnected");
       });
     });
   }
