@@ -8,7 +8,7 @@ const controller = new PurchasesController();
 purchasesRoutes.get("/", authentication, controller.getAllPurchases);
 purchasesRoutes.get(
   "/get-total-purchases-amount",
-  controller.getTotalPurchasesAmount
+  controller.getTotalPurchasesAmount,
 );
 
 export default purchasesRoutes;

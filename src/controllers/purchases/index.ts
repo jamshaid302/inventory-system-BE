@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../../../prisma";
 import { Purchase } from "@prisma/client";
 import { paginateData } from "../../utils/helper";
+import { successResponse } from "../../utils/response";
 
 class PurchasesController {
   getAllPurchases = async (req: Request, res: Response) => {
@@ -30,9 +31,12 @@ class PurchasesController {
       });
 
       count = purchases?.length;
-      const paginatedDate = paginateData(purchases, take, skip);
+      const paginatedData = paginateData(purchases, take, skip);
 
-      res.status(200).json({ count, purchases: paginatedDate });
+      res.status(200).json({ count, purchases: paginatedData });
+      // return res
+      //   ?.status(200)
+      //   .send(successResponse({ count, purchases: paginatedData }, ""));
     } catch (error) {
       console.error("Error getting purchases:", error);
       res.status(500).json({ message: "Failed to fetch purchases" });
@@ -55,7 +59,9 @@ class PurchasesController {
         0,
       );
 
-      res.status(200).json({ totalPurchases, itmeInStock: stock });
+      return res
+        .status(200)
+        .send(successResponse({ totalPurchases, itmeInStock: stock }));
     } catch (error) {
       console.error("Error getting purchases:", error);
       res.status(500).json({ message: "Failed to fetch purchases" });

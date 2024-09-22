@@ -7,6 +7,7 @@ import {
   filterSalesByDay,
   paginateData,
 } from "../../utils/helper";
+import { successResponse } from "../../utils/response";
 
 class SalesController {
   createSales = async (req: Request, res: Response) => {
@@ -147,11 +148,13 @@ class SalesController {
       const currentDaySalesTotal = calculateTotal(currentDaysales);
       const eachMonthSalesTotal = calculateMonthlySalesTotal(currentYearSales);
 
-      res.status(200).json({
-        salesTotal,
-        currentDaySalesTotal,
-        eachMonthSalesTotal,
-      });
+      return res.status(200).send(
+        successResponse({
+          salesTotal,
+          currentDaySalesTotal,
+          eachMonthSalesTotal,
+        }),
+      );
     } catch (error) {
       console.error("Error fectching Total Sales data:", error);
       res.status(500).json({ message: "Failed to fetch Total Sales data" });
